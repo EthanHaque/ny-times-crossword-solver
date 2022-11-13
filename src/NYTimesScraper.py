@@ -17,6 +17,7 @@ class NYTimesScraper(object):
         self._session = requests.Session()
         self.__init_session()
         self.__board_info_endpoint = {
+            # TODO: could expand this to include switch at 10pm and other dates.
             'daily-mini': f'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini/{date.today()}.json',
             'daily-crossword': f'https://www.nytimes.com/svc/crosswords/v6/puzzle/daily/{date.today()}.json'
         }
