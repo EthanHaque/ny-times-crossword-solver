@@ -21,7 +21,7 @@ class CrosswordBoard(object):
         # Dictionary of clue answers. Key is (number, direction) and value
         # is the clue.
         self._clues = {}
-        
+
         # Dictionary of clues and their corresponding positions. Key is
         # clue and value is a list of (number, direction) tuples.
         self._positions = {}
@@ -29,7 +29,7 @@ class CrosswordBoard(object):
         # Dictionary of answers. Key is (number, direction) and value is
         # the answer.
         self._answers = {}
-        
+
         self._allow_empty_clues = False
         self.dimensions = (0, 0)
 
@@ -55,7 +55,6 @@ class CrosswordBoard(object):
                 out += cell if cell else ' '
             out += '|\n'
         out += str('-' * (height + 2)) + '\n\n'
-
 
         out += f'Allow Empty Clues: {str(self._allow_empty_clues)}\n\n'
 
@@ -90,8 +89,6 @@ class CrosswordBoard(object):
             String representation of board.
         """
         return self.__str__()
-
-    
 
     def __validate_direction(self, direction: str) -> None:
         """Validate direction.
@@ -158,7 +155,7 @@ class CrosswordBoard(object):
             raise ValueError('Dimension[0] must be a positive integer.')
         if not isinstance(dimension[1], int) or dimension[1] < 1:
             raise ValueError('Dimension[1] must be a positive integer.')
-        
+
         self._board = [''] * (dimension[0] * dimension[1])
         self.dimensions = dimension
 
@@ -201,7 +198,7 @@ class CrosswordBoard(object):
             raise ValueError('Cell must be a string of length 1 or 0.')
         if index >= len(self._board):
             raise ValueError('Index out of range.')
-            
+
         self._board[index] = cell
 
     def remove_cell(self, index: int) -> None:
@@ -236,7 +233,7 @@ class CrosswordBoard(object):
         for cell in cells:
             answer += self.get_cell(cell)
         return answer
-    
+
     def add_clue_position(self, cells: list, number: int, direction: str) -> None:
         """Add clue position to board.
 
@@ -459,7 +456,7 @@ class CrosswordBoard(object):
         if clue not in self._positions:
             raise ValueError("Clue does not exist.")
         return self.get_answer(*self._positions[clue])
-    
+
     def allows_empty_clues(self) -> bool:
         """Check if board allows empty clues.
 
@@ -480,7 +477,7 @@ class CrosswordBoard(object):
         """
         if not isinstance(allow, bool):
             raise TypeError("allow must be a boolean.")
-        
+
         self._allow_empty_clues = allow
 
 
