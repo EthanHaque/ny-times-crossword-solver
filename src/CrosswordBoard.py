@@ -11,13 +11,84 @@ class CrosswordBoard(object):
 
     def __init__(self) -> None:
         """Initialize a crossword board."""
+        # Board is a list of strings. Each string is a single character.
         self._board = []
+
+        # Dictionary of clue positions. Key is (number, direction) and value
+        # is a list of cells that the clue occupies.
         self._clue_positions = {}
+
+        # Dictionary of clue answers. Key is (number, direction) and value
+        # is the clue.
         self._clues = {}
+        
+        # Dictionary of clues and their corresponding positions. Key is
+        # clue and value is a list of (number, direction) tuples.
         self._positions = {}
+
+        # Dictionary of answers. Key is (number, direction) and value is
+        # the answer.
         self._answers = {}
         self._allow_empty_clues = False
         self.dimensions = (0, 0)
+
+    def __str__(self) -> str:
+        """Get string representation of board.
+
+        Returns
+        -------
+        str
+            String representation of board.
+        """
+        width, height = self.get_dimensions()
+        out = ''
+
+        out += f'Board ({width}: {height}):\n'
+        out += str('-' * (width + 2)) + '\n'
+        for x in range(width):
+            out += '|'
+            for y in range(height):
+                cell = self.get_cell(x * height + y)
+                out += cell if cell else ' '
+            out += '|\n'
+        out += str('-' * (height + 2)) + '\n\n'
+
+
+        out += f'Allow Empty Clues: {str(self._allow_empty_clues)}\n\n'
+
+        out += 'Clue Positions:\n'
+        for key, value in self._clue_positions.items():
+            out += f'({key[0]}: {key[1]}): {value}\n'
+        out += '\n'
+
+        out += 'Clues:\n'
+        for key, value in self._clues.items():
+            out += f'({key[0]}: {key[1]}): {value}\n'
+        out += '\n'
+
+        out += 'Positions:\n'
+        for key, value in self._positions.items():
+            out += f'{key}: {value}\n'
+        out += '\n'
+
+        out += 'Answers:\n'
+        for key, value in self._answers.items():
+            out += f'({key[0]}: {key[1]}): {value}\n'
+        out += '\n'
+
+        return out
+
+    def __repr__(self) -> str:
+        """Get string representation of board.
+
+        Returns
+        -------
+        str
+            String representation of board.
+        """
+        return self.__str__()
+
+    
 
     def __validate_direction(self, direction: str) -> None:
         """Validate direction.
@@ -55,7 +126,7 @@ class CrosswordBoard(object):
             raise ValueError('Number must be a positive integer.')
         self.__validate_direction(direction)
 
-    def get_dimension(self) -> tuple:
+    def get_dimensions(self) -> tuple:
         """Get dimension of board.
 
         Returns
@@ -65,8 +136,11 @@ class CrosswordBoard(object):
         """
         return self.dimensions
 
-    def set_dimension(self, dimension: tuple) -> None:
-        """Set dimension of board.
+    def set_dimensions(self, dimension: tuple) -> None:
+        """Set dimension of board to (width, height).
+
+        Sets the dimensions of the board. Whenever this is called,
+        the board is reset.
 
         Parameters
         ----------
@@ -82,34 +156,30 @@ class CrosswordBoard(object):
         if not isinstance(dimension[1], int) or dimension[1] < 1:
             raise ValueError('Dimension[1] must be a positive integer.')
         
+        self._board = [''] * (dimension[0] * dimension[1])
         self.dimensions = dimension
 
-    def add_board_cell(self, cell: str) -> None:
-        """Add a cell to the board.
+    def get_cell(self, index: int) -> str:
+        """Get cell from board.
 
         Parameters
         ----------
-        cell : str
-            Cell to add to board.
-        """
-        if not isinstance(cell, str):
-            raise ValueError('Cell must be a string.')
-        if len(cell) != 1:
-            raise ValueError('Cell must be a string of length 1.')
-        
-        self._board.append(cell)
-
-    def get_board(self) -> list:
-        """Get board.
+        index : int
+            Index of cell to get.
 
         Returns
         -------
-        list
-            Board.
+        str
+            Cell at index.
         """
-        return self._board
+        if not isinstance(index, int) or index < 0:
+            raise ValueError('Index must be a positive integer.')
+        if index >= len(self._board):
+            raise ValueError('Index out of range.')
 
-    def set_board_cell(self, index: int, cell: str) -> None:
+        return self._board[index]
+
+    def set_cell(self, index: int, cell: str) -> None:
         """Set board cell.
 
         Parameters
@@ -124,13 +194,46 @@ class CrosswordBoard(object):
             raise ValueError('Index must be a positive integer.')
         if not isinstance(cell, str):
             raise ValueError('Cell must be a string.')
-        if len(cell) != 1:
-            raise ValueError('Cell must be a string of length 1.')
+        if len(cell) > 1:
+            raise ValueError('Cell must be a string of length 1 or 0.')
         if index >= len(self._board):
             raise ValueError('Index out of range.')
             
         self._board[index] = cell
 
+    def remove_cell(self, index: int) -> None:
+        """Remove cell from board.
+
+        Parameters
+        ----------
+        index : int
+            Index of cell to remove.
+        """
+        if not isinstance(index, int) or index < 0:
+            raise ValueError('Index must be a positive integer.')
+        if index >= len(self._board):
+            raise ValueError('Index out of range.')
+
+        self._board[index] = ''
+
+    def get_answer_from_cells(self, cells: list) -> str:
+        """Get answer from cells.
+
+        Parameters
+        ----------
+        cells : list
+            List of cells to get answer from.
+
+        Returns
+        -------
+        str
+            Answer from cells.
+        """
+        answer = ''
+        for cell in cells:
+            answer += self.get_cell(cell)
+        return answer
+    
     def add_clue_position(self, cells: list, number: int, direction: str) -> None:
         """Add clue position to board.
 
