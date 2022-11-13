@@ -29,6 +29,7 @@ class CrosswordBoard(object):
         # Dictionary of answers. Key is (number, direction) and value is
         # the answer.
         self._answers = {}
+        
         self._allow_empty_clues = False
         self.dimensions = (0, 0)
 
@@ -45,6 +46,8 @@ class CrosswordBoard(object):
 
         out += f'Board ({width}: {height}):\n'
         out += str('-' * (width + 2)) + '\n'
+        # This isn't efficient but it's easy to write.
+        # TODO: don't use string concatenation.
         for x in range(width):
             out += '|'
             for y in range(height):
