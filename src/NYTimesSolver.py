@@ -40,4 +40,4 @@ class NYTimesSolver(object):
 
 if __name__ == '__main__':
     solver = NYTimesSolver()
-    print(solver.solve('mini'))
+    print(solver.solve('daily'))

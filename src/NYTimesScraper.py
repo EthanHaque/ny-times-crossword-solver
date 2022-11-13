@@ -63,8 +63,7 @@ class NYTimesScraper(object):
         """
         if board_type not in self.__board_info_endpoint:
             raise ValueError(f'Invalid board type: {board_type}')
-        if not isinstance(date, date):
-            raise TypeError(f'Invalid date type: {type(date)}')
+        #TODO add check for valid date.
         if date > date.today():
             raise ValueError(f'Invalid date: {date}')
 
