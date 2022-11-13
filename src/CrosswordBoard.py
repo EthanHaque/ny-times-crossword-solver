@@ -17,6 +17,7 @@ class CrosswordBoard(object):
         self._positions = {}
         self._answers = {}
         self._allow_empty_clues = False
+        self.dimensions = (0, 0)
 
     def __validate_direction(self, direction: str) -> None:
         """Validate direction.
@@ -53,6 +54,26 @@ class CrosswordBoard(object):
         if not isinstance(number, int) or number < 1:
             raise ValueError('Number must be a positive integer.')
         self.__validate_direction(direction)
+
+    def get_dimension(self) -> tuple:
+        """Get dimension of board.
+
+        Returns
+        -------
+        tuple
+            Dimension of board.
+        """
+        return self.dimensions
+
+    def set_dimension(self, dimension: tuple) -> None:
+        """Set dimension of board.
+
+        Parameters
+        ----------
+        dimension : tuple
+            Dimension of board.
+        """
+        self.dimensions = dimension
 
     def add_board_cell(self, cell: str) -> None:
         """Add a cell to the board.
