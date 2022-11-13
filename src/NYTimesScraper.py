@@ -66,7 +66,6 @@ class NYTimesScraper(object):
 
         return self.construct_board(response)
 
-
     def construct_board(self, response) -> Board:
         """Get the crossword board from the New York Times website.
 
@@ -82,7 +81,7 @@ class NYTimesScraper(object):
         for cell_no, cell in enumerate(data['body'][0]['cells']):
             answer = cell['answer'] if 'answer' in cell else ''
             board.set_cell(cell_no, answer)
-        
+
         for clue in data['body'][0]['clues']:
             clue_cells = clue['cells']
             clue_direction = clue['direction'].lower()
@@ -91,10 +90,9 @@ class NYTimesScraper(object):
             board.add_clue_position(clue_cells, clue_number, clue_direction)
             board.add_clue(clue_number, clue_direction, clue_text)
 
-            # This isn't great design. 
+            # This isn't great design.
             answer = board.get_answer_from_cells(clue_cells)
             board.add_answer(clue_number, clue_direction, answer)
-
 
         return board
 
@@ -103,5 +101,3 @@ if __name__ == '__main__':
     scraper = NYTimesScraper()
     board = scraper.get_crossword_board('daily-crossword')
     print(board)
-
-
