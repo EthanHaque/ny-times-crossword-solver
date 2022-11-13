@@ -18,8 +18,8 @@ class NYTimesScraper(object):
         self.__init_session()
         self.__board_info_endpoint = {
             # TODO: could expand this to include switch at 10pm and other dates.
-            'daily-mini': f'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini/{date.today()}.json',
-            'daily-crossword': f'https://www.nytimes.com/svc/crosswords/v6/puzzle/daily/{date.today()}.json'
+            'mini': 'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini/{}.json',
+            'daily': 'https://www.nytimes.com/svc/crosswords/v6/puzzle/daily/{}.json'
         }
 
     def __init_session(self) -> None:
@@ -44,14 +44,17 @@ class NYTimesScraper(object):
         return (data['body'][0]['dimensions']['width'],
                 data['body'][0]['dimensions']['height'])
 
-    def get_crossword_board(self, board_type) -> Board:
+    def get_crossword_board(self, board_type, date) -> Board:
         """Get the crossword board from the New York Times website.
 
         Parameters
         ----------
         board_type : str
-            Type of crossword board to get. Options are 'daily-mini' and
-            'daily-crossword'.
+            Type of crossword board to get. Options are 'mini' and
+            'crossword'.
+
+        date : datetime.date
+            Date of the crossword board to get.
 
         Returns
         -------
@@ -60,8 +63,13 @@ class NYTimesScraper(object):
         """
         if board_type not in self.__board_info_endpoint:
             raise ValueError(f'Invalid board type: {board_type}')
+        if not isinstance(date, date):
+            raise TypeError(f'Invalid date type: {type(date)}')
+        if date > date.today():
+            raise ValueError(f'Invalid date: {date}')
 
-        response = self._session.get(self.__board_info_endpoint[board_type])
+        endpoint = self.__board_info_endpoint[board_type]
+        response = self._session.get(endpoint.format(date))
         response.raise_for_status()
 
         return self.construct_board(response)
@@ -99,5 +107,6 @@ class NYTimesScraper(object):
 
 if __name__ == '__main__':
     scraper = NYTimesScraper()
-    board = scraper.get_crossword_board('daily-crossword')
+    yesterday = date.today().replace(day=date.today().day - 1)
+    board = scraper.get_crossword_board('mini', yesterday)
     print(board)
