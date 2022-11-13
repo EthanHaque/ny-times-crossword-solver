@@ -14,7 +14,7 @@ class CrosswordBoard(object):
         self._clues = {}
         self._positions = {}
         self._answers = {}
-        self.allow_empty_clues = False
+        self._allow_empty_clues = False
 
     def __validate_direction(self, direction: str) -> None:
         """Validate direction.
@@ -70,7 +70,7 @@ class CrosswordBoard(object):
         self.__validate_position(number, direction)
         if (number, direction) in self._clues:
             raise ValueError("Clue already exists.")
-        if clue == '' and not self.allow_empty_clues:
+        if clue == '' and not self._allow_empty_clues:
             raise ValueError("Clue cannot be empty.")
 
         self._clues[(number, direction)] = clue
@@ -214,3 +214,22 @@ class CrosswordBoard(object):
             raise ValueError("Clue does not exist.")
         return self.get_answer(*self._positions[clue])
     
+    def allows_empty_clues(self) -> bool:
+        """Check if board allows empty clues.
+
+        Returns
+        -------
+        bool
+            True if board allows empty clues, False otherwise.
+        """
+        return self._allow_empty_clues
+
+    def set_allow_empty_clues(self, allow: bool) -> None:
+        """Set whether board allows empty clues.
+
+        Parameters
+        ----------
+        allow : bool
+            Whether to allow empty clues.
+        """
+        self._allow_empty_clues = allow
