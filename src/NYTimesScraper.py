@@ -6,6 +6,7 @@ website.
 
 import requests
 from CrosswordBoard import CrosswordBoard as Board
+from datetime import date
 
 
 class NYTimesScraper(object):
@@ -14,8 +15,16 @@ class NYTimesScraper(object):
     def __init__(self) -> None:
         """Initialize the NYTimesScraper."""
         self._session = requests.Session()
+        self.__init_session()
+        self.__board_info_endpoint = {
+            'daily-mini': f'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini/{date.today()}.json',
+            'daily-crossword': f'https://www.nytimes.com/svc/crosswords/v6/puzzle/daily/{date.today()}.json'
+        }
+
+    def __init_session(self) -> None:
+        """Initialize the session."""
         self._session.headers.update({'User-Agent': 'Mozilla/5.0'})
-        self._url = "https://www.nytimes.com/svc/crosswords/v6/puzzle/mini.json"
+        self._session.cookies.set('NYT-S', open('private/NYT-S-cookie').read())
 
     def get_dimensions(self, response) -> tuple:
         """Get the dimensions of the crossword board.
@@ -34,7 +43,30 @@ class NYTimesScraper(object):
         return (data['body'][0]['dimensions']['width'],
                 data['body'][0]['dimensions']['height'])
 
-    def get_crossword_board(self) -> Board:
+    def get_crossword_board(self, board_type) -> Board:
+        """Get the crossword board from the New York Times website.
+
+        Parameters
+        ----------
+        board_type : str
+            Type of crossword board to get. Options are 'daily-mini' and
+            'daily-crossword'.
+
+        Returns
+        -------
+        CrosswordBoard
+            Crossword board from the New York Times website.
+        """
+        if board_type not in self.__board_info_endpoint:
+            raise ValueError(f'Invalid board type: {board_type}')
+
+        response = self._session.get(self.__board_info_endpoint[board_type])
+        response.raise_for_status()
+
+        return self.construct_board(response)
+
+
+    def construct_board(self, response) -> Board:
         """Get the crossword board from the New York Times website.
 
         Returns
@@ -43,9 +75,6 @@ class NYTimesScraper(object):
             Crossword board from the New York Times website.
         """
         board = Board()
-
-        response = self._session.get(self._url)
-        response.raise_for_status()
 
         data = response.json()
         board.set_dimensions(self.get_dimensions(response))
@@ -71,5 +100,7 @@ class NYTimesScraper(object):
 
 if __name__ == '__main__':
     scraper = NYTimesScraper()
-    board = scraper.get_crossword_board()
+    board = scraper.get_crossword_board('daily-crossword')
     print(board)
+
+
