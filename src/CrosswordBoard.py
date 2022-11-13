@@ -479,3 +479,8 @@ class CrosswordBoard(object):
             raise TypeError("allow must be a boolean.")
         
         self._allow_empty_clues = allow
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
