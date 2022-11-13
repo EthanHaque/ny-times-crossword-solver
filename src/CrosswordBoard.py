@@ -11,6 +11,8 @@ class CrosswordBoard(object):
 
     def __init__(self) -> None:
         """Initialize a crossword board."""
+        self._board = []
+        self._clue_positions = {}
         self._clues = {}
         self._positions = {}
         self._answers = {}
@@ -51,6 +53,100 @@ class CrosswordBoard(object):
         if not isinstance(number, int) or number < 1:
             raise ValueError('Number must be a positive integer.')
         self.__validate_direction(direction)
+
+    def add_board_cell(self, cell: str) -> None:
+        """Add a cell to the board.
+
+        Parameters
+        ----------
+        cell : str
+            Cell to add to board.
+        """
+        self._board.append(cell)
+
+    def get_board(self) -> list:
+        """Get board.
+
+        Returns
+        -------
+        list
+            Board.
+        """
+        return self._board
+
+    def set_board_cell(self, index: int, cell: str) -> None:
+        """Set board cell.
+
+        Parameters
+        ----------
+        index : int
+            Index of cell to set.
+
+        cell : str
+            Cell to set.
+        """
+        self._board[index] = cell
+
+    def add_clue_position(self, cells: list, number: int, direction: str) -> None:
+        """Add clue position to board.
+
+        Parameters
+        ----------
+        cells : list
+            List of cells that the clue occupies.
+
+        number : int
+            Number corresponding to position on board.
+
+        direction : str
+            Direction corresponding to position on board. Must be one of
+            'across' or 'down'.
+        """
+        self.__validate_position(number, direction)
+        if (number, direction) in self._clue_positions:
+            raise ValueError("Clue position already exists.")
+        self._clue_positions[(number, direction)] = cells
+
+    def get_clue_position(self, number: int, direction: str) -> list:
+        """Get clue position.
+
+        Parameters
+        ----------
+        number : int
+            Number corresponding to position on board.
+
+        direction : str
+            Direction corresponding to position on board. Must be one of
+            'across' or 'down'.
+
+        Returns
+        -------
+        list
+            List of cells that the clue occupies.
+        """
+        self.__validate_position(number, direction)
+        if (number, direction) not in self._clue_positions:
+            raise ValueError("Clue position does not exist.")
+
+        return self._clue_positions[(number, direction)]
+
+    def remove_clue_position(self, number: int, direction: str) -> None:
+        """Remove clue position from number and direction (i.e position) on board.
+
+        Parameters
+        ----------
+        number : int
+            Number corresponding to position on board.
+
+        direction : str
+            Direction corresponding to position on board. Must be one of
+            'across' or 'down'.
+        """
+        self.__validate_position(number, direction)
+        if (number, direction) not in self._clue_positions:
+            raise ValueError("Clue position does not exist.")
+
+        del self._clue_positions[(number, direction)]
 
     def add_clue(self, number: int, direction: str, clue: str) -> None:
         """Add a clue to the board.
