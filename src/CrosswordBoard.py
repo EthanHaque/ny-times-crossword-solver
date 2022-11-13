@@ -73,6 +73,15 @@ class CrosswordBoard(object):
         dimension : tuple
             Dimension of board.
         """
+        if not isinstance(dimension, tuple):
+            raise ValueError('Dimension must be a tuple.')
+        if len(dimension) != 2:
+            raise ValueError('Dimension must be a tuple of length 2.')
+        if not isinstance(dimension[0], int) or dimension[0] < 1:
+            raise ValueError('Dimension[0] must be a positive integer.')
+        if not isinstance(dimension[1], int) or dimension[1] < 1:
+            raise ValueError('Dimension[1] must be a positive integer.')
+        
         self.dimensions = dimension
 
     def add_board_cell(self, cell: str) -> None:
@@ -83,6 +92,11 @@ class CrosswordBoard(object):
         cell : str
             Cell to add to board.
         """
+        if not isinstance(cell, str):
+            raise ValueError('Cell must be a string.')
+        if len(cell) != 1:
+            raise ValueError('Cell must be a string of length 1.')
+        
         self._board.append(cell)
 
     def get_board(self) -> list:
@@ -106,6 +120,15 @@ class CrosswordBoard(object):
         cell : str
             Cell to set.
         """
+        if not isinstance(index, int) or index < 0:
+            raise ValueError('Index must be a positive integer.')
+        if not isinstance(cell, str):
+            raise ValueError('Cell must be a string.')
+        if len(cell) != 1:
+            raise ValueError('Cell must be a string of length 1.')
+        if index >= len(self._board):
+            raise ValueError('Index out of range.')
+            
         self._board[index] = cell
 
     def add_clue_position(self, cells: list, number: int, direction: str) -> None:
@@ -349,4 +372,7 @@ class CrosswordBoard(object):
         allow : bool
             Whether to allow empty clues.
         """
+        if not isinstance(allow, bool):
+            raise TypeError("allow must be a boolean.")
+        
         self._allow_empty_clues = allow
